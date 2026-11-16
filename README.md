@@ -24,7 +24,7 @@ An end-to-end analytics project on **62,516 consumer complaints** about Bank of 
 6. July 2023 is the highest month on record (+57% vs the Jan–Jun average).
 7. 96.5% of complaints carry no substantive public response.
 
-Five linked recommendations in [Business Insights](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Business%20Insights%20%26%20Recommendations.md)
+Four linked recommendations in [Business Insights](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Business%20Insights%20%26%20Recommendations.md)
 
 ## Dashboard
 | Page | Focus |
