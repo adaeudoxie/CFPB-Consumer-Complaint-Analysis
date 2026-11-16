@@ -2,7 +2,7 @@
 An end-to-end analytics project on **62,516 consumer complaints** about Bank of America submitted to the US Consumer Financial Protection Bureau (CFPB) between **1 May 2017 and 28 Aug 2023**. It covers data validation, cleaning, 12 KPIs cross-checked in Python and SQL, evidence-based insights, and a four-page Power BI dashboard.
 > A complaint is a consumer-reported issue. It is not proof of misconduct. A company response category is a recorded classification, not proof of a satisfactory outcome.
 
-![Executive Overview](powerbi/screenshots/01_executive_overview.jpg)
+![Executive Overview](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Executive%20Overview.jpg)
 
 ## Headline Results
 | KPI | Value |
@@ -30,7 +30,7 @@ Five linked recommendations: [`reports/recommendations.md`](reports/recommendati
 ## Dashboard
 | Page | Focus |
 |---|---|
-| ![Executive Overview](powerbi/screenshots/01_executive_overview.jpg) | KPIs, monthly trend, product mix, annual volume, responses, summary |
+| [Executive Overview](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Executive%20Overview.jpg) | KPIs, monthly trend, product mix, annual volume, responses, summary |
 | ![Product & Issue](powerbi/screenshots/02_product_issue.jpg) | Products, top sub-products, top issues, issue × product |
 | ![Company Response](powerbi/screenshots/03_company_response.jpg) | Response categories, timely/untimely/pending, monthly timeliness, response mix by product, public responses |
 | ![Complaint Timeline](powerbi/screenshots/04_complaint_timeline.jpg) | Monthly trend, annual YoY (partial years flagged), interval distribution, intervals by product, 30+ day cases |
