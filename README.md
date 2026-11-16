@@ -16,16 +16,15 @@ An end-to-end analytics project on **62,516 consumer complaints** about Bank of 
 | Lowest Monthly Timely Rate | **58.35%** (June 2021) |
 | CFPB Forwarding Interval | Average **1.22** days, 435 complaints > 30 days |
 
-**Key Insights** (full detail in [`reports/business_insights.md`](reports/business_insights.md)):
+**Key Insights** (Full detail in [Business Insights](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Business%20Insights%20%26%20Recommendations.md))
 1. Volume grew 64.5% in 4 full years and is still rising in 2023.
 2. Two products account for two-thirds of complaints. "Managing an account" alone is almost a quarter.
 3. Timeliness collapsed in mid-2021, and 2021 holds half of all untimely responses.
-4. Recorded monetary relief is concentrated in checking/savings (32%) and cards (30%).
 5. Referral complaints are 17% of volume but 48% of 30+ day forwarding delays.
 6. July 2023 is the highest month on record (+57% vs the Jan–Jun average).
 7. 96.5% of complaints carry no substantive public response.
 
-Five linked recommendations: [`reports/recommendations.md`](reports/recommendations.md).
+Five linked recommendations in [Business Insights](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Business%20Insights%20%26%20Recommendations.md)
 
 ## Dashboard
 | Page | Focus |
@@ -34,8 +33,6 @@ Five linked recommendations: [`reports/recommendations.md`](reports/recommendati
 | [Product & Issue](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Product%20%26%20Issue%20Analysis.jpg) | Products, top sub-products, top issues, issue × product |
 | [Company Response](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Company%20Response%20Analysis.jpg) | Response categories, timely/untimely/pending, monthly timeliness, response mix by product, public responses |
 | [Complaint Timeline](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Complaint%20Timeline%20Analysis.jpg) | Monthly trend, annual YoY (partial years flagged), interval distribution, intervals by product, 30+ day cases |
-
-Open `powerbi/CCI_Dashboard.pbit` in Power BI Desktop. When asked for `ProjectFolder`, enter the folder containing `complaints_clean.csv`. All 19 DAX measures are readable in [`powerbi/measures.dax`](powerbi/measures.dax). Guide: [`documentation/dashboard_guide.md`](documentation/dashboard_guide.md).
 
 ## Repository structure
 ```
