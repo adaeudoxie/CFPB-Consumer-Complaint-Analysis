@@ -31,9 +31,9 @@ Five linked recommendations: [`reports/recommendations.md`](reports/recommendati
 | Page | Focus |
 |---|---|
 | [Executive Overview](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Executive%20Overview.jpg) | KPIs, monthly trend, product mix, annual volume, responses, summary |
-| ![Product & Issue](powerbi/screenshots/02_product_issue.jpg) | Products, top sub-products, top issues, issue × product |
-| ![Company Response](powerbi/screenshots/03_company_response.jpg) | Response categories, timely/untimely/pending, monthly timeliness, response mix by product, public responses |
-| ![Complaint Timeline](powerbi/screenshots/04_complaint_timeline.jpg) | Monthly trend, annual YoY (partial years flagged), interval distribution, intervals by product, 30+ day cases |
+| [Product & Issue](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Product%20%26%20Issue%20Analysis.jpg) | Products, top sub-products, top issues, issue × product |
+| [Company Response](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Company%20Response%20Analysis.jpg) | Response categories, timely/untimely/pending, monthly timeliness, response mix by product, public responses |
+| [Complaint Timeline](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Complaint%20Timeline%20Analysis.jpg) | Monthly trend, annual YoY (partial years flagged), interval distribution, intervals by product, 30+ day cases |
 
 Open `powerbi/CCI_Dashboard.pbit` in Power BI Desktop. When asked for `ProjectFolder`, enter the folder containing `complaints_clean.csv`. All 19 DAX measures are readable in [`powerbi/measures.dax`](powerbi/measures.dax). Guide: [`documentation/dashboard_guide.md`](documentation/dashboard_guide.md).
 
