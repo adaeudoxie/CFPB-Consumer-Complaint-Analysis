@@ -33,24 +33,6 @@ Linked recommendations in [Business Insights](https://github.com/adaeudoxie/CFPB
 | [Company Response](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Company%20Response%20Analysis.jpg) | Response categories, timely/untimely/pending, monthly timeliness, response mix by product, public responses |
 | [Complaint Timeline](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dashboard/Complaint%20Timeline%20Analysis.jpg) | Monthly trend, annual YoY (partial years flagged), interval distribution, intervals by product, 30+ day cases |
 
-## Repository structure
-```
-├── src/                      # reproducible Python pipeline
-│   ├── config.py             # paths and constants
-│   ├── data_cleaning.py      # raw Excel → cleaned CSV (no rows removed, originals preserved)
-│   ├── data_inspection.py    # profiles the raw data
-│   ├── validation.py         # 23 automated data checks
-│   ├── analysis.py           # 12 KPIs (pandas)
-│   ├── run_sql.py            # runs named SQL queries in SQLite
-│   └── cross_check.py        # Python vs SQL KPI comparison
-├── sql/                      # KPI, insight-evidence and validation queries
-├── notebooks/                # complaint_analysis.ipynb (executed walkthrough)
-├── reports/                  # data quality · KPI report · business insights · recommendations
-├── documentation/            # data dictionary · methodology · dashboard guide · testing report
-├── powerbi/                  # dashboard template (.pbit), DAX measures, screenshots
-└── run_pipeline.py           # one command: clean → validate → KPIs → SQL → cross-check
-```
-
 ## Methodology
 ### Design Decisions
 | Decision | Rationale |
@@ -66,21 +48,21 @@ Linked recommendations in [Business Insights](https://github.com/adaeudoxie/CFPB
 | Two independent KPI implementations | Detects logic errors that a single implementation would hide |
 
 ### Validation Strategy
-Data checks → negative tests → SQL cross-check → schema validation of report JSON → DAX query check in Power BI → visual inspection. See [`testing_report.md`](testing_report.md).
+Data checks → negative tests → SQL cross-check → schema validation of report JSON → DAX query check in Power BI → visual inspection. More details in [Testing Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Testing%20Report.md).
 
 ### Assumptions and Limitations
 #### Data Limitations
-- **No company response or resolution date.** Company response time cannot be measured. The only interval available is CFPB forwarding time.
-- **No customer or account counts.** Volumes can't be converted to complaint *rates* by product or state. California's 21.93% share most likely reflects customer distribution.
-- **No relief amounts or satisfaction/dispute field.** Response categories describe what was recorded, not whether the consumer was satisfied.
-- **Partial periods:** 2017 (May–Dec), 2023 (Jan–28 Aug), Aug 2023 (to the 28th).
-- **Recent complaints still open:** 1,494 in progress, and 1,550 of the blank public responses are from 2023. Recent-period response metrics may change.
-- **Possible repeat submissions:** 248 rows in 120 groups share all attributes with near-consecutive IDs. They are kept since the effect on KPIs is below 0.4% of volume.
+- *No company response or resolution date.* Company response time cannot be measured. The only interval available is CFPB forwarding time.
+- *No customer or account counts.* Volumes can't be converted to complaint *rates* by product or state. California's 21.93% share most likely reflects customer distribution.
+- *No relief amounts or satisfaction/dispute field.* Response categories describe what was recorded, not whether the consumer was satisfied.
+- *Partial periods:* 2017 (May–Dec), 2023 (Jan–28 Aug), Aug 2023 (to the 28th).
+- *Recent complaints still open:* 1,494 in progress, and 1,550 of the blank public responses are from 2023. Recent-period response metrics may change.
+- *Possible repeat submissions:* 248 rows in 120 groups share all attributes with near-consecutive IDs. They are kept since the effect on KPIs is below 0.4% of volume.
 
 #### Analytical Assumptions
 - Each Complaint ID is one complaint.
 - Date submitted is the event date for all time-based analysis.
-- The ">30 days" threshold for unusually long forwarding is a judgement (≈99.3rd percentile).
+- The >30 days threshold for unusually long forwarding is a judgement (≈99.3rd percentile).
 - Issue and product combinations are taken as recorded. Credit-reporting issues filed under card or mortgage products follow CFPB form design.
 
 #### What the Analysis Does not Claim
@@ -90,28 +72,25 @@ Data checks → negative tests → SQL cross-check → schema validation of repo
 ### Integration with Other Tracks
 This project provides validated, reusable assets for the other tracks in the internship:
 
-| Track | What Data Analytics Provides | Where |
+| Track | Provision | Location |
 |---|---|---|
-| Data Science | Cleaned dataset with documented rules. Validated KPI tables for hypothesis tests | `03_Working_Files/complaints_clean.csv`, `outputs/kpi_outputs/` (via `run_pipeline.py`) |
-| Machine Learning | Validated monthly series (76 months, no gaps) with partial-month flag | `outputs/kpi_outputs/PY_K03_monthly_volume.csv` |
-| Generative AI | Ground-truth KPI values and definitions for grounding and evaluating the assistant's answers | `reports/kpi_report.md` |
-| Project Management | Deliverables register, testing evidence, risk inputs (data quality issues DQ1–DQ10) | `04_Deliverables/Deliverables_Register.xlsx`, `reports/data_quality_report.md` |
+| Data Science | Cleaned dataset with documented rules. Validated KPI tables for hypothesis tests | [Cleaned Data](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dataset/Cleaned.zip), [KPI](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/KPI%20Report.md) |
+| Generative AI | Ground-truth KPI values and definitions for grounding and evaluating the assistant's answers | [KPI Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/KPI%20Report.md) |
+| Project Management | Deliverables register, testing evidence, risk inputs | [Deliverables Register](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Dataset/Deliverables%20Register.xlsx), [Data Quality Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Data%20Quality%20Report.md) |
 
 #### Shared Definitions
-See the "Shared definitions" table in `reports/kpi_report.md` (section 4): complaint volume, product/issue, company response, timely indicator (Yes/No/Pending), forwarding interval and reporting period.
+See the "Shared definitions" table in [KPI Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/KPI%20Report.md).
 
-## Method in Brief
-1. **Inspect and clean:** label, derive and flag, never delete. 22 derived columns ([data_quality_report](reports/data_quality_report.md)).
-2. **Validate:** 23 Python and 9 SQL checks, plus negative tests ([data_quality_report §6](reports/data_quality_report.md#6-validation-results)).
-3. **Calculate:** 12 KPIs in Python and independently in SQL. 16/16 tables identical ([kpi_report](reports/kpi_report.md)).
-4. **Visualise:** Power BI model with 19 DAX measures, validated by DAX query against the Python/SQL outputs ([testing_report](documentation/testing_report.md)).
-
-Full methodology: [`documentation/methodology.md`](documentation/methodology.md).
+## Method Summary
+1. **Inspect and clean:** label, derive and flag, never delete. 22 derived columns ([Data Quality Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Data%20Quality%20Report.md)
+2. **Validate:** 23 Python and 9 SQL checks, plus negative tests ([Data Quality Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Data%20Quality%20Report.md)
+3. **Calculate:** 12 KPIs in Python and independently in SQL. 16/16 tables identical ([KPI Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/KPI%20Report.md)).
+4. **Visualize:** Power BI model with 19 DAX measures, validated by DAX query against the Python/SQL outputs ([Testing Report](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Testing%20Report.md)).
 
 ## Key Interpretation Rules
-- **Blank "Timely response?" is not "No".** The 1,494 blanks are all *In progress* complaints. They are labelled *Pending* and excluded from the timely % denominator.
-- **Date received − Date submitted is the CFPB forwarding interval**, not the company's response or resolution time.
-- **2017 (May–Dec) and 2023 (Jan–28 Aug) are partial years.** Year-on-year comparisons use full years or the same Jan–Aug window.
+- Blank "Timely response?" is not "No". The 1,494 blanks are all *In progress* complaints. They are labelled *Pending* and excluded from the timely % denominator.
+- Date received - Date submitted is the CFPB forwarding interval, not the company's response or resolution time.
+- 2017 (May–Dec) and 2023 (Jan–28 Aug) are partial years. Year-on-year comparisons use full years or the same Jan–Aug window.
 
 ## Tools
 - Python
@@ -119,8 +98,8 @@ Full methodology: [`documentation/methodology.md`](documentation/methodology.md)
 - Jupyter
 - Power BI
 
-## AI assistance
-Claude (Anthropic) was used as an AI assistant for Python checks. All outputs were run, validated and reviewed. The revision log is in [`documentation/testing_report.md`](documentation/testing_report.md#7-revision-log).
+## AI Assistance
+Claude was used as an AI assistant for checks. All outputs were run, validated and reviewed.
 
 ---
-#AnalystLabAfrica
+#DataAnalytics #AnalystLabAfrica
