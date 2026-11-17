@@ -1,8 +1,8 @@
 # KPI Report
 
-**Source table:** `complaints_clean.csv` (62,516 rows).
+**Source table:** `cleaned_dataset.csv` (62,516 rows).
 **Date basis:** `Date submitted`, the date the CFPB received the complaint.
-**Calculated in:** `src/analysis.py` (Python) and `sql/kpi_calculations.sql` (SQL). Both results are compared automatically (section 3: 16/16 match).
+**Calculated in:** `python_flies/analysis.py` (Python) and `sql_scripts/kpi_calculations.sql` (SQL). Both results are compared automatically (section 3: 16/16 match).
 **Dashboard:** the DAX measure names below are the ones used in the Power BI model.
 
 ## Contents
@@ -45,7 +45,7 @@
 | 12 | YoY change (full years) | 2019: -10.12%, 2020: +26.39%, 2021: +24.68%, 2022: +16.18% |
 
 ## Python vs SQL cross-check
-Each KPI was calculated twice, in pandas (`src/analysis.py`) and in SQLite (`sql/kpi_calculations.sql`), using code written independently. A KPI passes only if every row and value matches (tolerance ±0.01 for rounded percentages). All KPI values matched.
+Each KPI was calculated twice, in pandas (`python_files/analysis.py`) and in SQLite (`sql_scripts/kpi_calculations.sql`), using code written independently. A KPI passes only if every row and value matches (tolerance ±0.01 for rounded percentages). All KPI values matched.
 
 | KPI Table | Result | Detail |
 |---|---|---|
