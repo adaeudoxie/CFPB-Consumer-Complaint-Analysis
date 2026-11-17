@@ -13,7 +13,7 @@
 
 ## Definitions
 
-| # | KPI | Definition | Formula | DAX measure | Result (full period) | Caveats |
+| # | KPI | Definition | Formula | DAX measure | Result | Caveats |
 |---|---|---|---|---|---|---|
 | 1 | Total complaints | Number of complaint records | `COUNT(Complaint ID)` | `[Total Complaints]` | 62,516 | A complaint is a consumer-reported issue, not proof of wrongdoing |
 | 2 | Annual complaint volume | Complaints per calendar year of Date submitted | `COUNT` grouped by Year | `[Total Complaints]` by Year | 2018: 7,872 · 2019: 7,075 · 2020: 8,942 · 2021: 11,149 · 2022: 12,953 | 2017 (May–Dec, 5,394) and 2023 (Jan–28 Aug, 9,131) are partial years |
