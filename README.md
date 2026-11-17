@@ -22,9 +22,8 @@ An end-to-end analytics project on **62,516 consumer complaints** about Bank of 
 3. Timeliness collapsed in mid-2021, and 2021 holds half of all untimely responses.
 5. Referral complaints are 17% of volume but 48% of 30+ day forwarding delays.
 6. July 2023 is the highest month on record (+57% vs the Jan–Jun average).
-7. 96.5% of complaints carry no substantive public response.
 
-Four linked recommendations in [Business Insights](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Business%20Insights%20%26%20Recommendations.md)
+Linked recommendations in [Business Insights](https://github.com/adaeudoxie/CFPB-Consumer-Complaint-Analysis/blob/main/Reports/Business%20Insights%20%26%20Recommendations.md)
 
 ## Dashboard
 | Page | Focus |
@@ -52,17 +51,56 @@ Four linked recommendations in [Business Insights](https://github.com/adaeudoxie
 └── run_pipeline.py           # one command: clean → validate → KPIs → SQL → cross-check
 ```
 
-## Reproduce
-The source data is **not committed**. It is the CFPB complaint extract for Bank of America supplied by AnalystLab Africa (`Consumer_Complaints.xlsx`, sheet `Data`, 62,516 rows × 12 columns).
-```bash
-pip install -r requirements.txt
-export COMPLAINTS_RAW=/path/to/Consumer_Complaints.xlsx   # input (read only)
-export COMPLAINTS_OUT=/path/to/output_folder              # where complaints_clean.csv is written
-python run_pipeline.py      # exits non-zero if any validation or cross-check fails
-```
-Generated profiles, check results and KPI tables are written to `outputs/` (not committed).
+## Methodology
+### Design Decisions
+| Decision | Rationale |
+|---|---|
+| Never delete rows | No duplicate keys or rows. Distinct Complaint IDs are distinct complaints (brief §4) |
+| Keep originals and add new columns | Every cleaned value traces back to the source |
+| Blank timely → "Pending", excluded from denominator | The blanks match *In progress* exactly |
+| Forwarding interval named as CFPB-side | Avoids misreading it as company response time |
+| "Unusually long" = > 30 days | About the 99.3rd percentile (435 of 62,516). Clear operational meaning |
+| Partial-year flags on 2017 and 2023 | Prevents misleading YoY |
+| Like-for-like YoY window (1 Jan – 28 Aug) | Fair 2023 comparison |
+| Same-attribute groups flagged, not removed | 248 possible repeat submissions. Sensitivity can be tested |
+| Two independent KPI implementations | Detects logic errors that a single implementation would hide |
 
-## Method in brief
+### Validation Strategy
+Data checks → negative tests → SQL cross-check → schema validation of report JSON → DAX query check in Power BI → visual inspection. See [`testing_report.md`](testing_report.md).
+
+### Assumptions and Limitations
+#### Data Limitations
+- **No company response or resolution date.** Company response time cannot be measured. The only interval available is CFPB forwarding time.
+- **No customer or account counts.** Volumes can't be converted to complaint *rates* by product or state. California's 21.93% share most likely reflects customer distribution.
+- **No relief amounts or satisfaction/dispute field.** Response categories describe what was recorded, not whether the consumer was satisfied.
+- **Partial periods:** 2017 (May–Dec), 2023 (Jan–28 Aug), Aug 2023 (to the 28th).
+- **Recent complaints still open:** 1,494 in progress, and 1,550 of the blank public responses are from 2023. Recent-period response metrics may change.
+- **Possible repeat submissions:** 248 rows in 120 groups share all attributes with near-consecutive IDs. They are kept since the effect on KPIs is below 0.4% of volume.
+
+#### Analytical Assumptions
+- Each Complaint ID is one complaint.
+- Date submitted is the event date for all time-based analysis.
+- The ">30 days" threshold for unusually long forwarding is a judgement (≈99.3rd percentile).
+- Issue and product combinations are taken as recorded. Credit-reporting issues filed under card or mortgage products follow CFPB form design.
+
+#### What the Analysis Does not Claim
+- Causes for the June 2021 timeliness drop or the July 2023 spike. These need internal data.
+- Misconduct or regulatory breach.
+
+### Integration with Other Tracks
+This project provides validated, reusable assets for the other tracks in the internship:
+
+| Track | What Data Analytics Provides | Where |
+|---|---|---|
+| Data Science | Cleaned dataset with documented rules. Validated KPI tables for hypothesis tests | `03_Working_Files/complaints_clean.csv`, `outputs/kpi_outputs/` (via `run_pipeline.py`) |
+| Machine Learning | Validated monthly series (76 months, no gaps) with partial-month flag | `outputs/kpi_outputs/PY_K03_monthly_volume.csv` |
+| Generative AI | Ground-truth KPI values and definitions for grounding and evaluating the assistant's answers | `reports/kpi_report.md` |
+| Project Management | Deliverables register, testing evidence, risk inputs (data quality issues DQ1–DQ10) | `04_Deliverables/Deliverables_Register.xlsx`, `reports/data_quality_report.md` |
+
+#### Shared Definitions
+See the "Shared definitions" table in `reports/kpi_report.md` (section 4): complaint volume, product/issue, company response, timely indicator (Yes/No/Pending), forwarding interval and reporting period.
+
+## Method in Brief
 1. **Inspect and clean:** label, derive and flag, never delete. 22 derived columns ([data_quality_report](reports/data_quality_report.md)).
 2. **Validate:** 23 Python and 9 SQL checks, plus negative tests ([data_quality_report §6](reports/data_quality_report.md#6-validation-results)).
 3. **Calculate:** 12 KPIs in Python and independently in SQL. 16/16 tables identical ([kpi_report](reports/kpi_report.md)).
@@ -70,22 +108,19 @@ Generated profiles, check results and KPI tables are written to `outputs/` (not 
 
 Full methodology: [`documentation/methodology.md`](documentation/methodology.md).
 
-## Key interpretation rules
+## Key Interpretation Rules
 - **Blank "Timely response?" is not "No".** The 1,494 blanks are all *In progress* complaints. They are labelled *Pending* and excluded from the timely % denominator.
 - **Date received − Date submitted is the CFPB forwarding interval**, not the company's response or resolution time.
 - **2017 (May–Dec) and 2023 (Jan–28 Aug) are partial years.** Year-on-year comparisons use full years or the same Jan–Aug window.
 
-## Limitations
-No company response dates, narratives, customer counts or relief amounts, so resolution time, complaint validity and complaint *rates* cannot be measured. See [`documentation/methodology.md`](documentation/methodology.md#6-assumptions-and-limitations).
-
 ## Tools
-Python (pandas, openpyxl, matplotlib), SQLite, Jupyter, Power BI Desktop (DAX, Power Query), Git/GitHub.
-
-## Data source and attribution
-Consumer Financial Protection Bureau (CFPB), Consumer Complaint Database: complaints relating to Bank of America, supplied by AnalystLab Africa for training purposes. This project is not affiliated with the CFPB or Bank of America.
+- Python
+- SQLite
+- Jupyter
+- Power BI
 
 ## AI assistance
-Claude (Anthropic) was used as an AI assistant for code, documentation and dashboard generation. All outputs were run, validated and reviewed. The revision log is in [`documentation/testing_report.md`](documentation/testing_report.md#7-revision-log).
+Claude (Anthropic) was used as an AI assistant for Python checks. All outputs were run, validated and reviewed. The revision log is in [`documentation/testing_report.md`](documentation/testing_report.md#7-revision-log).
 
 ---
 #AnalystLabAfrica
