@@ -1,8 +1,3 @@
-// Consumer Complaint Intelligence: DAX measures (19) and KPI validation query
-// The measures below are the ones in the Power BI model (table 'Complaints').
-// To validate: open CCI_Dashboard in Power BI Desktop > DAX query view, paste this file and run it.
-// Expected values (from the cross-checked Python and SQL outputs) are in the comments.
-
 DEFINE
 
     // ---- 1 Volume
