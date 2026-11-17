@@ -1,0 +1,53 @@
+// Consumer Complaint Intelligence: DAX measures (19) and KPI validation query
+// The measures below are the ones in the Power BI model (table 'Complaints').
+// To validate: open CCI_Dashboard in Power BI Desktop > DAX query view, paste this file and run it.
+// Expected values (from the cross-checked Python and SQL outputs) are in the comments.
+
+DEFINE
+
+    // ---- 1 Volume
+    MEASURE Complaints[Total Complaints] = COUNTROWS ( Complaints )
+    MEASURE Complaints[% of Total Complaints] = DIVIDE ( [Total Complaints], CALCULATE ( [Total Complaints], ALLSELECTED ( Complaints ) ) )
+    MEASURE Complaints[YoY Change %] = VAR _y = SELECTEDVALUE ( Complaints[Year] ) VAR _prev = CALCULATE ( [Total Complaints], REMOVEFILTERS ( Complaints[Year] ), Complaints[Year] = _y - 1 ) RETURN IF ( NOT ISBLANK ( _y ) && _prev > 0, DIVIDE ( [Total Complaints] - _prev, _prev ) )
+    MEASURE Complaints[Partial Year Flag] = IF ( HASONEVALUE ( Complaints[Year] ), IF ( SELECTEDVALUE ( Complaints[Is Partial Year] ) = TRUE (), "Partial year", "Full year" ) )
+
+    // ---- 2 Product and issue
+    MEASURE Complaints[Products] = DISTINCTCOUNT ( Complaints[Product] )
+    MEASURE Complaints[Issues] = DISTINCTCOUNT ( Complaints[Issue] )
+    MEASURE Complaints[Sub-issues] = CALCULATE ( DISTINCTCOUNT ( Complaints[Sub-issue Clean] ), Complaints[Sub-issue Clean] <> "No sub-issue recorded" )
+
+    // ---- 3 Response
+    MEASURE Complaints[Timely Yes] = CALCULATE ( [Total Complaints], Complaints[Timely Response Status] = "Yes" )
+    MEASURE Complaints[Untimely Responses] = CALCULATE ( [Total Complaints], Complaints[Timely Response Status] = "No" )
+    MEASURE Complaints[Pending Timely Response] = CALCULATE ( [Total Complaints], Complaints[Timely Response Status] = "Pending" )
+    MEASURE Complaints[Timely Response %] = DIVIDE ( [Timely Yes], [Timely Yes] + [Untimely Responses] )
+    MEASURE Complaints[In Progress Complaints] = CALCULATE ( [Total Complaints], Complaints[Is In Progress] = TRUE () )
+    MEASURE Complaints[Monetary Relief %] = DIVIDE ( CALCULATE ( [Total Complaints], Complaints[Company response to consumer] = "Closed with monetary relief" ), [Total Complaints] )
+
+    // ---- 4 Forwarding
+    MEASURE Complaints[Avg Forwarding Days] = AVERAGE ( Complaints[Forwarding Interval Days] )
+    MEASURE Complaints[Median Forwarding Days] = MEDIAN ( Complaints[Forwarding Interval Days] )
+    MEASURE Complaints[Max Forwarding Days] = MAX ( Complaints[Forwarding Interval Days] )
+    MEASURE Complaints[Long Forwarding Complaints] = CALCULATE ( [Total Complaints], Complaints[Is Long Forwarding Interval] = TRUE () )
+    MEASURE Complaints[Long Forwarding %] = DIVIDE ( [Long Forwarding Complaints], [Total Complaints] )
+
+    // ---- 5 Labels
+    MEASURE Complaints[Data Period] = "Data: " & FORMAT ( MIN ( Complaints[Date submitted] ), "d mmm yyyy" ) & " - " & FORMAT ( MAX ( Complaints[Date submitted] ), "d mmm yyyy" )
+
+EVALUATE {
+    ("01 Total", [Total Complaints]),                                   // 62516
+    ("02 Timely %", ROUND([Timely Response %] * 100, 2)),              // 96.06
+    ("03 Untimely", [Untimely Responses]),                              // 2403
+    ("04 Pending", [Pending Timely Response]),                          // 1494
+    ("05 In progress", [In Progress Complaints]),                       // 1494
+    ("06 Avg fwd", ROUND([Avg Forwarding Days], 2)),                    // 1.22
+    ("07 Median fwd", [Median Forwarding Days]),                        // 0
+    ("08 Max fwd", [Max Forwarding Days]),                              // 275
+    ("09 Over 30", [Long Forwarding Complaints]),                       // 435
+    ("10 Monetary %", ROUND([Monetary Relief %] * 100, 2)),            // 23.51
+    ("11 Products", [Products]),                                        // 9
+    ("12 Issues", [Issues]),                                            // 76
+    ("13 Sub-issues", [Sub-issues]),                                    // 158
+    ("16 YoY 2022", ROUND(CALCULATE([YoY Change %], Complaints[Year] = 2022) * 100, 2)),          // 16.18
+    ("17 2021 timely %", ROUND(CALCULATE([Timely Response %], Complaints[Year] = 2021) * 100, 2))  // 89.02
+}
